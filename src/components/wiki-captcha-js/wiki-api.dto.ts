@@ -21,6 +21,10 @@ export class UserAnswerDto {
   public selected: boolean = false;
 }
 
+export class UserAnswersResponseDto {
+  public human: boolean;
+}
+
 export enum QUESTION_TYPES {
   IMAGE = 'IMG',
   FREE_TEXT = 'INPUT',

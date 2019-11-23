@@ -1,5 +1,5 @@
 import {Component, State} from '@stencil/core';
-import {AnswerDto, UserAnswerDto, WikiApiDto} from './wiki-api.dto';
+import {AnswerDto, UserAnswerDto, UserAnswersResponseDto, WikiApiDto} from './wiki-api.dto';
 
 @Component({
   tag: 'wikidata-captcha-js',
@@ -31,8 +31,9 @@ export class WikiCaptchaJs {
 
       const maxImageSize = question.answersAvailable.length < this.IMAGES_PER_CAPTCHA ? question.answersAvailable.length : this.IMAGES_PER_CAPTCHA;
       images = (question.answersAvailable.slice(0, maxImageSize).map(a =>
-        (<img src={a.imgUrl} class="wiki-captcha-img" alt="possible captcha answer" onClick={this.onImageClick.bind(this, a)}/>
-        ))
+        (<div class="wiki-captcha-img-overlay wiki-captcha-img-overlay-off" onClick={this.onImageClick.bind(this, a)}>
+          <img src={a.imgUrl} class="wiki-captcha-img" alt="possible captcha answer"/>
+        </div>))
       );
     }
 
@@ -67,13 +68,14 @@ export class WikiCaptchaJs {
     }
     answer.userAnswer.selected = !answer.userAnswer.selected;
 
-    const imgElem = event.target as HTMLImageElement;
+    const divElement = event.target as HTMLDivElement;
     if (answer.userAnswer.selected) {
-      imgElem.classList.add('wiki-captcha-img-selected');
+      divElement.classList.remove('wiki-captcha-img-overlay-off');
+      divElement.classList.add('wiki-captcha-img-overlay-on');
     } else {
-      imgElem.classList.remove('wiki-captcha-img-selected');
+      divElement.classList.remove('wiki-captcha-img-overlay-on');
+      divElement.classList.add('wiki-captcha-img-overlay-off');
     }
-    console.log('event', imgElem);
   }
 
   onSubmitCaptchaAnswers() {
@@ -87,8 +89,15 @@ export class WikiCaptchaJs {
         body: JSON.stringify(this.questionList)
       }
     )
-      .then(() => {
+      .then(res => res.json())
+      .then((respParsed) => {
         this.loading = false;
+        const response = respParsed as UserAnswersResponseDto;
+        if (response.human) {
+          alert('You are a human!');
+        } else {
+          alert('You are NOT a human!');
+        }
         this.fetchQuestions();
       })
       .catch(err => {

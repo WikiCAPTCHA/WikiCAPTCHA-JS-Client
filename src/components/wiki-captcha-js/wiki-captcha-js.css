@@ -36,17 +36,38 @@
 
 .wiki-captcha-img,
 .wiki-captcha-img-selected {
-  width: 4rem;
+  width: 100%;
   height: 6rem;
   flex: 1 0 30%; /* 3 images per row  */
+}
+
+.wiki-captcha-img-overlay {
+  display: inline-block;
+  position: relative;
+  width: 33.3%;
+  height: 6rem;
+  z-index: 1;
   cursor: pointer;
 }
 
-.wiki-captcha-img-selected {
-  outline: 4px solid var(--color-primary-img-highlight, black);
-  width: 4rem;
-  height: 6rem;
-  outline-offset: -4px;
+.wiki-captcha-img-overlay-on:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(117, 1, 117, 0.5);
+}
+
+.wiki-captcha-img-overlay-off:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(117, 1, 117, 0.0);
 }
 
 .wiki-captcha-footer {
