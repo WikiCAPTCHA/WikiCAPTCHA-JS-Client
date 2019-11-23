@@ -18,10 +18,10 @@ export class AnswerDto {
 
 export class UserAnswerDto {
   public userInput: string;
-  public selected: boolean;
+  public selected: boolean = false;
 }
 
-enum QUESTION_TYPES {
+export enum QUESTION_TYPES {
   IMAGE = 'IMG',
   FREE_TEXT = 'INPUT',
   OPTIONS = 'OPTIONS'

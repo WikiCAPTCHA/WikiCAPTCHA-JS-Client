@@ -12,8 +12,8 @@ import '@stencil/core';
 
 export namespace Components {
 
-  interface UcSpinner {}
-  interface UcSpinnerAttributes extends StencilHTMLAttributes {}
+  interface WikiDataSpinner {}
+  interface WikiDataSpinnerAttributes extends StencilHTMLAttributes {}
 
   interface WikidataCaptchaJs {}
   interface WikidataCaptchaJsAttributes extends StencilHTMLAttributes {}
@@ -21,20 +21,20 @@ export namespace Components {
 
 declare global {
   interface StencilElementInterfaces {
-    'UcSpinner': Components.UcSpinner;
+    'WikiDataSpinner': Components.WikiDataSpinner;
     'WikidataCaptchaJs': Components.WikidataCaptchaJs;
   }
 
   interface StencilIntrinsicElements {
-    'uc-spinner': Components.UcSpinnerAttributes;
+    'wiki-data-spinner': Components.WikiDataSpinnerAttributes;
     'wikidata-captcha-js': Components.WikidataCaptchaJsAttributes;
   }
 
 
-  interface HTMLUcSpinnerElement extends Components.UcSpinner, HTMLStencilElement {}
-  var HTMLUcSpinnerElement: {
-    prototype: HTMLUcSpinnerElement;
-    new (): HTMLUcSpinnerElement;
+  interface HTMLWikiDataSpinnerElement extends Components.WikiDataSpinner, HTMLStencilElement {}
+  var HTMLWikiDataSpinnerElement: {
+    prototype: HTMLWikiDataSpinnerElement;
+    new (): HTMLWikiDataSpinnerElement;
   };
 
   interface HTMLWikidataCaptchaJsElement extends Components.WikidataCaptchaJs, HTMLStencilElement {}
@@ -44,12 +44,12 @@ declare global {
   };
 
   interface HTMLElementTagNameMap {
-    'uc-spinner': HTMLUcSpinnerElement
+    'wiki-data-spinner': HTMLWikiDataSpinnerElement
     'wikidata-captcha-js': HTMLWikidataCaptchaJsElement
   }
 
   interface ElementTagNameMap {
-    'uc-spinner': HTMLUcSpinnerElement;
+    'wiki-data-spinner': HTMLWikiDataSpinnerElement;
     'wikidata-captcha-js': HTMLWikidataCaptchaJsElement;
   }
 

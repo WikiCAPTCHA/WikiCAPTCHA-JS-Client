@@ -6,8 +6,24 @@
   <title>Stencil Component Starter</title>
 
   <style>
+    *,
+    *::after,
+    *::before {
+      margin: 0;
+      padding: 0;
+      box-sizing: inherit;
+    }
+
+    html {
+      --color-primary: #3b013b;
+      --color-primary-inverse: white;
+      --color-primary-highlight: #750175;
+      --color-primary-img-highlight: #750175;
+    }
     body {
       font-family: sans-serif;
+      box-sizing: border-box;
+      padding: 3rem;
     }
   </style>
 

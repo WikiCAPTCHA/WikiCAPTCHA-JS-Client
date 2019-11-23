@@ -1,7 +1,7 @@
 import { Component } from '@stencil/core';
 
 @Component({
-  tag: 'uc-spinner',
+  tag: 'wiki-data-spinner',
   styleUrl: './spinner.css',
   shadow: true
 })
