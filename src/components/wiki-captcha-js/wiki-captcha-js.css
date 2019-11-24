@@ -5,7 +5,7 @@
   padding: 1rem;
   display: block;
   max-width: 100%;
-  min-height: 26rem;
+  min-height: 10rem;
   box-shadow: 0 2px 8px rgba(0,0,0,.26);
   border-radius: 3px;
   width: 20rem;
@@ -38,7 +38,7 @@
   border-radius: 3px;
   overflow: hidden;
   align-self: center;
-  /*border: 2px solid var(--color-primary, black);*/
+  border: 1px solid grey;
   box-shadow: 0 2px 8px rgba(0,0,0,.5);
 }
 
@@ -109,6 +109,7 @@ button {
   background: var(--color-primary, black);
   color: var(--color-primary-inverse, white);
   cursor: pointer;
+  border-radius: 3px;
 }
 
 button:hover,
@@ -126,4 +127,13 @@ button:disabled {
 
 p {
   align-self: center;
+}
+
+input {
+  min-width: 100%;
+  font: inherit;
+  outline: none;
+  overflow: hidden;
+  border-radius: 3px;
+  border: none;
 }

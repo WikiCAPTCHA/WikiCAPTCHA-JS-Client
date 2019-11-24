@@ -6,11 +6,22 @@ export class WikiDataFactory {
     const questions = new WikiApiDto();
     questions.sessionId = 'abcd';
     questions.questionList = [];
-    questions.questionList.push(this.getSingleQuestion());
+    questions.questionList.push(this.getSingleQuestionImg());
+    questions.questionList.push(this.getSingleQuestionInput());
     return questions;
   }
 
-  private getSingleQuestion(): QuestionDto {
+  private getSingleQuestionInput(): QuestionDto {
+    const question = new QuestionDto();
+    question.questionId = '1';
+    question.questionText = 'How many moons does Earth have?';
+    question.questionType = QUESTION_TYPES.FREE_TEXT;
+    question.answersAvailable = [];
+    question.answersAvailable.push(this.getAnswer('', '1'));
+    return question;
+  }
+
+  private getSingleQuestionImg(): QuestionDto {
     const question = new QuestionDto();
     question.questionId = '1';
     question.questionText = 'Select ALL images with men';
@@ -28,9 +39,10 @@ export class WikiDataFactory {
     return question;
   }
 
-  private getAnswer(img: string): AnswerDto {
+  private getAnswer(img: string, text?: string): AnswerDto {
     const answer = new AnswerDto();
     answer.imgUrl = img;
+    answer.text = text;
     return answer;
   }
 }

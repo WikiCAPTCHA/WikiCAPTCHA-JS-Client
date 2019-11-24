@@ -15,8 +15,11 @@ export namespace Components {
   interface WikiDataSpinner {}
   interface WikiDataSpinnerAttributes extends StencilHTMLAttributes {}
 
-  interface WikidataCaptchaJs {}
+  interface WikidataCaptchaJs {
+    'language': string;
+  }
   interface WikidataCaptchaJsAttributes extends StencilHTMLAttributes {
+    'language'?: string;
     'onWikiIsHuman'?: (event: CustomEvent<boolean>) => void;
   }
 }

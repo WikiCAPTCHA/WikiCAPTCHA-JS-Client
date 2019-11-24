@@ -1,5 +1,13 @@
-import {Component, EventEmitter, State, Event} from '@stencil/core';
-import {AnswerDto, UserAnswerDto, UserAnswersResponseDto, WikiApiDto} from './wiki-api.dto';
+import {Component, Event, EventEmitter, Prop, State} from '@stencil/core';
+import {
+  AnswerDto,
+  QUESTION_TYPES,
+  QuestionDto,
+  UserAnswerDto,
+  UserAnswersResponseDto,
+  WikiApiDto
+} from './wiki-api.dto';
+// import {WikiDataFactory} from "../../test/factory";
 
 @Component({
   tag: 'wikidata-captcha-js',
@@ -8,9 +16,14 @@ import {AnswerDto, UserAnswerDto, UserAnswersResponseDto, WikiApiDto} from './wi
 })
 export class WikiCaptchaJs {
 
+  private readonly QUESTION_INDEX = 0;
   private readonly WIKI_DATA_URL = 'http://192.168.1.142:8080';
   private readonly WIKI_DATA_ICON = 'https://upload.wikimedia.org/wikipedia/commons/6/66/Wikidata-logo-en.svg';
   private readonly IMAGES_PER_CAPTCHA = 9;
+  private captchaInput: HTMLInputElement;
+  private currentQuestion: QuestionDto;
+
+  @Prop({ mutable: true, reflectToAttr: true }) language: string = 'en';
 
   @State() private questionList: WikiApiDto;
   @State() private loading = false;
@@ -18,26 +31,36 @@ export class WikiCaptchaJs {
 
   @Event({bubbles: true, composed: true}) wikiIsHuman: EventEmitter<boolean>;
 
+  componentWillLoad() {
+    this.language = 'en';
+  }
+
   componentDidLoad() {
     this.fetchQuestions();
   }
 
   render() {
-    let question = null;
     let questionText = null;
     let images = null;
     let htmlContent = null;
+    this.currentQuestion = null;
+    this.captchaInput = null;
 
     if (this.questionList && this.questionList.questionList.length > 0) {
-      question = this.questionList.questionList[0];
-      questionText = question.questionText;
+      this.currentQuestion = this.questionList.questionList[this.QUESTION_INDEX];
+      questionText = this.currentQuestion.questionText;
 
-      const maxImageSize = question.answersAvailable.length < this.IMAGES_PER_CAPTCHA ? question.answersAvailable.length : this.IMAGES_PER_CAPTCHA;
-      images = (question.answersAvailable.slice(0, maxImageSize).map(a =>
-        (<div class="wiki-captcha-img-overlay wiki-captcha-img-overlay-off" onClick={this.onImageClick.bind(this, a)}>
-          <img src={a.imgUrl} class="wiki-captcha-img" alt="possible captcha answer"/>
-        </div>))
-      );
+      switch (this.currentQuestion.questionType) {
+        case QUESTION_TYPES.IMAGE:
+          images = this.renderImageQuestionContent(this.currentQuestion);
+          break;
+        case QUESTION_TYPES.FREE_TEXT:
+          images = (<input id="wiki-data-captcha-input" type="text" ref={el => (this.captchaInput = el)}/>);
+          break;
+        case QUESTION_TYPES.OPTIONS:
+        default:
+          this.error = true;
+      }
     }
 
     if (this.error) {
@@ -77,6 +100,14 @@ export class WikiCaptchaJs {
       </div>);
   }
 
+  renderImageQuestionContent(question: QuestionDto) {
+    const maxImageSize = question.answersAvailable.length < this.IMAGES_PER_CAPTCHA ? question.answersAvailable.length : this.IMAGES_PER_CAPTCHA;
+    return question.answersAvailable.slice(0, maxImageSize).map(a =>
+        (<div class="wiki-captcha-img-overlay wiki-captcha-img-overlay-off" onClick={this.onImageClick.bind(this, a)}>
+          <img src={a.imgUrl} class="wiki-captcha-img" alt="possible captcha answer"/>
+        </div>));
+  }
+
   onImageClick(answer: AnswerDto, event: Event) {
     if (!answer.userAnswer) {
       answer.userAnswer = new UserAnswerDto();
@@ -97,6 +128,13 @@ export class WikiCaptchaJs {
   onSubmitCaptchaAnswers() {
     this.loading = true;
     this.error = false;
+    switch (this.currentQuestion.questionType) {
+      case QUESTION_TYPES.FREE_TEXT:
+        this.currentQuestion.answersAvailable[0].userAnswer = new UserAnswerDto();
+        this.currentQuestion.answersAvailable[0].userAnswer.userInput = this.captchaInput.value;
+        break;
+    }
+    console.log('BODY', this.questionList);
     fetch(
       this.WIKI_DATA_URL + '/answers', {
         method: 'PUT',
@@ -126,7 +164,7 @@ export class WikiCaptchaJs {
     this.loading = true;
     this.error = false;
     const requestBody = {
-      'language': 'en',
+      'language': this.language,
       'appid': 1
     };
     fetch(
@@ -142,6 +180,7 @@ export class WikiCaptchaJs {
       .then(res => res.json())
       .then(parsedRes => {
         this.questionList = parsedRes as WikiApiDto;
+        // this.questionList = new WikiDataFactory().getQuestions();
         this.loading = false;
         this.error = false;
       })

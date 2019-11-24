@@ -35,20 +35,28 @@
 </head>
 <body>
 
+<select id="language-dropdown" onchange="onLanguageChange()">
+  <option value="en">English</option>
+  <option value="de">German</option>
+  <option value="it">Italian</option>
+</select>
+
 <div class="wiki-captcha-host">
-  <wikidata-captcha-js></wikidata-captcha-js>
+  <wikidata-captcha-js language="en"></wikidata-captcha-js>
 </div>
 
 <script>
     const wikiEl = document.querySelector('wikidata-captcha-js');
     wikiEl.addEventListener('wikiIsHuman', event => {
-        console.log('event caught', event);
         if (event === true) {
             alert('You are human!');
         } else {
             alert('You are NOT human!');
         }
     });
+    function onLanguageChange() {
+        wikiEl.language = document.getElementById("language-dropdown").value;
+    }
 </script>
 </body>
 </html>
