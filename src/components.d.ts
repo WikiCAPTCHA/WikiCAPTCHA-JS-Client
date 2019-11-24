@@ -16,7 +16,9 @@ export namespace Components {
   interface WikiDataSpinnerAttributes extends StencilHTMLAttributes {}
 
   interface WikidataCaptchaJs {}
-  interface WikidataCaptchaJsAttributes extends StencilHTMLAttributes {}
+  interface WikidataCaptchaJsAttributes extends StencilHTMLAttributes {
+    'onWikiIsHuman'?: (event: CustomEvent<boolean>) => void;
+  }
 }
 
 declare global {

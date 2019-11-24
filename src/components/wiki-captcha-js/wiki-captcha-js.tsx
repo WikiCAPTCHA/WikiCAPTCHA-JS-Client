@@ -1,4 +1,4 @@
-import {Component, State} from '@stencil/core';
+import {Component, EventEmitter, State, Event} from '@stencil/core';
 import {AnswerDto, UserAnswerDto, UserAnswersResponseDto, WikiApiDto} from './wiki-api.dto';
 
 @Component({
@@ -14,6 +14,9 @@ export class WikiCaptchaJs {
 
   @State() private questionList: WikiApiDto;
   @State() private loading = false;
+  @State() private error = false;
+
+  @Event({bubbles: true, composed: true}) wikiIsHuman: EventEmitter<boolean>;
 
   componentDidLoad() {
     this.fetchQuestions();
@@ -37,7 +40,11 @@ export class WikiCaptchaJs {
       );
     }
 
-    if (this.loading) {
+    if (this.error) {
+      htmlContent = [<p class="wiki-captcha-error">Oops, something went wrong!</p>,
+        this.renderFooter()];
+    }
+    else if (this.loading) {
       htmlContent = <wiki-data-spinner></wiki-data-spinner>;
     } else {
       htmlContent = [
@@ -45,20 +52,29 @@ export class WikiCaptchaJs {
       <div class="wiki-captcha-img-container">
         {images}
       </div>,
-      <div class="wiki-captcha-footer">
-        <div class="wiki-captcha-submit">
-          <button type="button" onClick={this.onSubmitCaptchaAnswers.bind(this)}>SUBMIT</button>
-        </div>
-        <div class="wiki-captcha-powered-by">
-          <p>Powered By</p>
-          <img src={this.WIKI_DATA_ICON} alt="Wikidata icon" class="wiki-captcha-powered-by-icon"/>
-        </div>
-      </div>]
+      this.renderFooter()]
     }
 
     return (<div class="wiki-captcha-box">
       {htmlContent}
     </div>);
+  }
+
+  renderFooter() {
+    let submitHtml = null;
+    if (!this.error) {
+      submitHtml = (<div class="wiki-captcha-submit">
+        <button type="button" onClick={this.onSubmitCaptchaAnswers.bind(this)}>SUBMIT</button>
+      </div>);
+    }
+    return (
+      <div class="wiki-captcha-footer">
+        {submitHtml}
+        <div class="wiki-captcha-powered-by">
+          <p>Powered By</p>
+          <img src={this.WIKI_DATA_ICON} alt="Wikidata icon" class="wiki-captcha-powered-by-icon"/>
+        </div>
+      </div>);
   }
 
   onImageClick(answer: AnswerDto, event: Event) {
@@ -79,6 +95,8 @@ export class WikiCaptchaJs {
   }
 
   onSubmitCaptchaAnswers() {
+    this.loading = true;
+    this.error = false;
     fetch(
       this.WIKI_DATA_URL + '/answers', {
         method: 'PUT',
@@ -92,24 +110,24 @@ export class WikiCaptchaJs {
       .then(res => res.json())
       .then((respParsed) => {
         this.loading = false;
+        this.error = false;
         const response = respParsed as UserAnswersResponseDto;
-        if (response.human) {
-          alert('You are a human!');
-        } else {
-          alert('You are NOT a human!');
-        }
+        this.wikiIsHuman.emit(response.human);
         this.fetchQuestions();
       })
       .catch(err => {
         console.log(err);
         this.loading = false;
+        this.error = true;
       });
   }
 
   fetchQuestions() {
     this.loading = true;
+    this.error = false;
     const requestBody = {
-      'language': 'en'
+      'language': 'en',
+      'appid': 1
     };
     fetch(
       this.WIKI_DATA_URL + '/questions', {
@@ -125,10 +143,12 @@ export class WikiCaptchaJs {
       .then(parsedRes => {
         this.questionList = parsedRes as WikiApiDto;
         this.loading = false;
+        this.error = false;
       })
       .catch(err => {
         console.log(err);
         this.loading = false;
+        this.error = true;
       });
   }
 }

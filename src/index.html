@@ -34,6 +34,15 @@
   <wikidata-captcha-js></wikidata-captcha-js>
 
 <script>
+    const wikiEl = document.querySelector('wikidata-captcha-js');
+    wikiEl.addEventListener('wikiIsHuman', event => {
+        console.log('event caught', event);
+        if (event === true) {
+            alert('You are human!');
+        } else {
+            alert('You are NOT human!');
+        }
+    });
 </script>
 </body>
 </html>
