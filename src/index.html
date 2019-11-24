@@ -25,13 +25,19 @@
       box-sizing: border-box;
       padding: 3rem;
     }
+    .wiki-captcha-host {
+      display: flex;
+      justify-content: center;
+    }
   </style>
 
   <script src="/build/mycomponent.js"></script>
 </head>
 <body>
 
+<div class="wiki-captcha-host">
   <wikidata-captcha-js></wikidata-captcha-js>
+</div>
 
 <script>
     const wikiEl = document.querySelector('wikidata-captcha-js');
